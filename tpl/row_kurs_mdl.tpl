@@ -1,0 +1,1 @@
+<tr><td>{#discipline_index}. {#name}</td><td>{#theme}</td></tr>

@@ -1,0 +1,1 @@
+<tr><td align="center">{#name_group}</td><td align="center">{#id_semestr}{if course}/{#course}{/if}</td><td>{#name}</td><td align="center">{#competence}</td><td align="center">{#mname}</td>{if is_show}<td align="center">{#rus}</td>{/if}</tr>

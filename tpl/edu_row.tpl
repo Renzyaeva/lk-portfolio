@@ -1,0 +1,1 @@
+<span itemprop="Degree"><span itemprop="AcademStat"><b>{#type}</b>: {#kind}</span>{if kind}. {/if}<span itemprop="EmployeeQualification">{#name}</span></span> 

@@ -1,0 +1,1 @@
+<div><span class="nps-subj" itemprop="TeachingDiscipline">{#name}</span></div>

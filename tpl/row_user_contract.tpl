@@ -1,0 +1,1 @@
+<tr><td>{#type}</td><td>{#full_numb}</td><td>{#status}</td><td>{#debt}</td></tr> 

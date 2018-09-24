@@ -1,0 +1,1 @@
+<td><label id="spdev{#id}"><input type="checkbox" title="{#name}" id="spdev{#id}" name="spdev{#id}" {if checked}checked="checked"{/if}>{#name}</label></td>

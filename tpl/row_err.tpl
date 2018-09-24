@@ -1,0 +1,2 @@
+<tr><td>{#i}.</td><td><a href="/card/{#eios_id}">{#familyname} {#firstname} {#lastname} ({#stgroup}, {#faculty})</a></td><td>{#doc_pref}</td><td>{#doc_numb}</td><td>{#doc_date}</td><td>{#datevvoda}</td><td>{if error_text}{#error_text}{/if}</td><td>{#operator}</td></tr>
+ 

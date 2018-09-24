@@ -1,0 +1,1 @@
+<a href="http://lk.pnzgu.ru/portfolio/{#id_user}" target="_blank">{#name}</a>
