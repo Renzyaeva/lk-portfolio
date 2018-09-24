@@ -84,6 +84,10 @@ function genPass() {
 		document.getElementById('pass_form').style.display = "block";
 }
 
+function setBio() {
+   $('.biography').slideToggle( "slow" );
+}
+
 
 </script>
 {if is_deleted}<div class="msg-error">Данный пользователь ЗАБЛОКИРОВАН (отчислен/выпустился/не работает)! Редактирование данных ЗАПРЕЩЕНО! Вход на территорию ЗАПРЕЩЕН!</div>
@@ -147,6 +151,11 @@ function genPass() {
 		{if exp}		<div class="user-row">Стаж: {#exp}</div>
 		{if exp_pgu}	<div class="user-row">Педагогический стаж: {#exp_pgu}</div>
 		{if biography}	<div class="user-row">Биография: {#biography}</div>
+        {if my} <div class="user-row">
+        {if my}     <span class="bio-edit" onclick="setBio();">Добавить/Изменить биографию</span>
+        {if my}     <form action="/portfolio/{#id}"><div class="biography"><textarea cols="30" rows="10" name="biography">{#biography}</textarea><br>
+        {if my}            <input type="hidden" name="id_user" value="{#id}"><input type="submit" value="Сохранить" name="save_bio"></form></div>
+        {if my} </div>
 		{if my}<div class="user-row">Телефон: {#tel} 
 		{if my}	<b><a style="cursor: pointer;" onclick="toggle_tree('new_tel', '');">Изменить</a></b>
 		{if my}	<div id="new_tel" style="display: none;">

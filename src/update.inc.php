@@ -359,6 +359,12 @@ if ($loggedIn) {
         } else {
             die($file);
         }
+    } elseif($request->hasValue('save_bio')) {
+        $biography = $functions->getForm(array('id_user', 'biography'));
+        $id_add = $portfolioHome->getValue('id_user', $biography['id_user'], 'user_add', array('id'), 2);
+        $biography['id'] =$id_add['id'];
+        $portfolioHome->save_esia('user_add', $biography, array('id', 'biography'));
+        $response->redirect('/portfolio/'.$biography['id_user']);
     }
 }
 
