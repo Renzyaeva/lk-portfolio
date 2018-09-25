@@ -8,6 +8,7 @@
 {if is_dop}{if presence} <font size="-2">(последний проход: {#presence})</font> {/if}
 {if is_dop}{if nomark} - <span title="{#nomark}">не выставлены оценки</span>{/if}
 {if is_dop}{if noippr} - не заполнен ИППР{/if}
+{if is_dop}{if noippr137} - не заполнены блоки ИППР ({#noippr137}){/if}
 </td><td  style="padding: 4px;">
 {if pass}"{#login}" - "{#password}"
 {if number}{#id_user}
