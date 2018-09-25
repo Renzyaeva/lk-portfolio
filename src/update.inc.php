@@ -262,11 +262,15 @@ if ($loggedIn) {
 		}
 		if($request->getValue('is_goal') == 'on') $ippr['is_goal'] = 1;
 		else $ippr['is_goal'] = 0;
-		$ippr['work_date_begin'] = $functions->remakeDate($request->getValue('work_date_begin'));
-		$ippr['dpo_date_begin'] = $functions->remakeDate($request->getValue('dpo_date_begin'));
-        $ippr['work_date_begin2'] = $functions->remakeDate($request->getValue('work_date_begin2'));
-        $ippr['dpo_date_begin2'] = $functions->remakeDate($request->getValue('dpo_date_begin2'));
-		$id = $portfolioHome->save_esia('user_ippr', $ippr, $portfolioHome->item_ippr);
+		if($request->getValue('work_date_begin')) $ippr['work_date_begin'] = $functions->remakeDate($request->getValue('work_date_begin'));
+		else $ippr['work_date_begin'] = 0;
+        if($request->getValue('dpo_date_begin')) $ippr['dpo_date_begin'] = $functions->remakeDate($request->getValue('dpo_date_begin'));
+        else $ippr['dpo_date_begin'] = 0;
+        if($request->getValue('work_date_begin2')) $ippr['work_date_begin2'] = $functions->remakeDate($request->getValue('work_date_begin2'));
+        else $ippr['work_date_begin2'] = 0;
+        if($request->getValue('dpo_date_begin2')) $ippr['dpo_date_begin2'] = $functions->remakeDate($request->getValue('dpo_date_begin2'));
+        else $ippr['dpo_date_begin2'] = 0;
+        $id = $portfolioHome->save_esia('user_ippr', $ippr, $portfolioHome->item_ippr);
 		$ippr_plan['id_ippr'] = $ippr['id'];
 		
 		if($ippr_dop) {
@@ -335,13 +339,48 @@ if ($loggedIn) {
         $exec = $usersHome->getByExec($request->getValue('ippr'));
         $ip['dep'] = $exec['name_department'];
         $ip['name'] = $exec['name'];
-        $ip['programmitem'] = $exec['spec_name'];
+        $tmp = $usersHome->getSpec($exec['id_spec']);
+        $ip['programmitem'] = $tmp['napravlenie'].'. '.$tmp['profilename'];
         $ip['id_exec'] = $exec['id'];
+        if($ip['is_goal']) $ip['is_goal'] = 'Есть';
+        else $ip['is_goal'] = 'Нет';
+        if($ip["work_date_begin"]>0) $ip["work_date_begin"] = date("d.m.Y", $ip["work_date_begin"]);
+        else $ip["work_date_begin"] = '';
+        if($ip["dpo_date_begin"]>0) $ip["dpo_date_begin"] = date("d.m.Y", $ip["dpo_date_begin"]);
+        else $ip["dpo_date_begin"] = '';
+        if($ip["work_date_begin2"]>0) $ip["work_date_begin2"] = date("d.m.Y", $ip["work_date_begin2"]);
+        else $ip["work_date_begin2"] = '';
+        if($ip["dpo_date_begin2"]>0) $ip["dpo_date_begin2"] = date("d.m.Y", $ip["dpo_date_begin2"]);
+        else $ip["dpo_date_begin2"] = '';
+        $ip['contact'] = 'E-mail: '.$user['email'].', Телефон: '.$user['tel'];
         $templateProcessor = new TemplateProcessor(realpath('files/lk/docs/templates/form_ippr.docx'));
         foreach ($ip as $field => $content) {
             $templateProcessor->setValue($field, $content);
         }
-        
+
+        $planEventsList = $portfolioHome->getUserIPPRPlan($ip['id']);
+        //var_dump($planEventsList);
+        //var_dump($ip);
+        if($planEventsList && is_array($planEventsList)) {
+            $templateProcessor->cloneRow('i', count($planEventsList));
+            $i = 0;
+            if ($planEventsList && is_array($planEventsList)) {
+                foreach ($planEventsList as $planEventItem) {
+                    $i++;
+                    foreach ($planEventItem as $field => $content) {
+                        $templateProcessor->setValue($field . '#' . $i, $content);
+                        $templateProcessor->setValue('i#' . $i, $i);
+                    }
+                }
+            }
+        } else {
+            $templateProcessor->setValue('plan_event', '');
+            $templateProcessor->setValue('plan_period', '');
+            $templateProcessor->setValue('plan_res', '');
+            $templateProcessor->setValue('plan_done', '');
+            $templateProcessor->setValue('plan_reason', '');
+            $templateProcessor->setValue('i', '');
+        }
         $filename = 'ИППР #'.$ip['id'].' - '.$user['name'];
         $file = realpath('files/lk/docs/templates/tmp').'/'.$filename.'.docx';
         $templateProcessor->saveAs($file);

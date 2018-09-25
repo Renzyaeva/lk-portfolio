@@ -358,6 +358,7 @@ if($request->hasValue('portfolio') && $request->hasValue('err') && ($rights=='wr
 			$user['rows_edu'] .= $templateHome->parse($modules_root."users/tpl/row_user.tpl", $value);
 		}
 		foreach ($executions as $value) {
+		    //var_dump($value);
 			if($request->hasValue('my') || $rights=='write') { 
 			    $value['is_show_user'] = true;
 			}
@@ -956,6 +957,18 @@ if($request->hasValue('portfolio') && $request->hasValue('err') && ($rights=='wr
 							}
 							$ippr = $portfolioHome->getUserIPPR($item['id_user'], $item['id']);
 							if(!$ippr['id']) $item['noippr'] = true;
+							else {
+							    $ipprPlanList = $portfolioHome->getUserIPPRPlan($ippr['id']);
+							    if(!$ippr['prpractice'] && !$ippr['dpractice']) $item['noippr137'] = 'не заполнен п.1';
+                                if(!$ipprPlanList) {
+                                    if($item['noippr137']) $item['noippr137'] .= ', ';
+                                    $item['noippr137'] .= 'не заполнен п.3';
+                                }
+							    if(!$ippr['ready']) {
+                                    if($item['noippr137']) $item['noippr137'] .= ', ';
+							        $item['noippr137'] .= 'не заполнен п.7';
+                                }
+                            }
 							if($rights=='write') {
 								$id_spec = $portfolioHome->getValue('id', $request->getValue('study_group'), 'user_study_group', array('id_spec'), 2);
 								$nomarks = $portfolioHome->getControlMark($item['id'], $item['id_user'], $item['id_position'], $id_spec['id_spec'], $cardHome);
@@ -1117,10 +1130,13 @@ if($request->hasValue('portfolio') && $request->hasValue('err') && ($rights=='wr
 		$ip = $portfolioHome->getUserIPPR($id_portfolio, $request->getValue('ippr'));
 		$executions = $usersHome->getExecutions($id_portfolio, true);
 		foreach ($executions as $item_exec) {
+		    //var_dump($item_exec);
 			if($item_exec['id'] == $request->getValue('ippr')) {
 				$ip['dep'] = $item_exec['name_department'];
 				$ip['name'] = $item_exec['name'];
-				$ip['programmitem'] = $item_exec['spec_name'];
+                $tmp = $usersHome->getSpec($item_exec['id_spec']);
+                $ip['programmitem'] = $tmp['napravlenie'].'. '.$tmp['profilename'];
+				//$ip['programmitem'] = $item_exec['spec_name'];
 				$ip['id_exec'] = $item_exec['id'];
 			}			
 		}
@@ -1136,11 +1152,16 @@ if($request->hasValue('portfolio') && $request->hasValue('err') && ($rights=='wr
 			 	$ip['add_plan_list'] .= $templateHome->parse($modules_root."portfolio/tpl/row_plan_event.tpl", $item_plan_event);
 			} 
 		}
-        $ip["work_date_begin"] = date("d.m.Y", $ip["work_date_begin"]);
-        $ip["dpo_date_begin"] = date("d.m.Y", $ip["dpo_date_begin"]);
-        $ip["work_date_begin2"] = date("d.m.Y", $ip["work_date_begin2"]);
-        $ip["dpo_date_begin2"] = date("d.m.Y", $ip["dpo_date_begin2"]);
-		if($request->hasValue('add') || $request->hasValue('edit')) {
+		if($ip["work_date_begin"]>0) $ip["work_date_begin"] = date("d.m.Y", $ip["work_date_begin"]);
+        else $ip["work_date_begin"] = '';
+        if($ip["dpo_date_begin"]>0) $ip["dpo_date_begin"] = date("d.m.Y", $ip["dpo_date_begin"]);
+        else $ip["dpo_date_begin"] = '';
+        if($ip["work_date_begin2"]>0) $ip["work_date_begin2"] = date("d.m.Y", $ip["work_date_begin2"]);
+        else $ip["work_date_begin2"] = '';
+        if($ip["dpo_date_begin2"]>0) $ip["dpo_date_begin2"] = date("d.m.Y", $ip["dpo_date_begin2"]);
+        else $ip["dpo_date_begin2"] = '';
+
+        if($request->hasValue('add') || $request->hasValue('edit')) {
 			$module['text'].= $templateHome->parse($modules_root."portfolio/tpl/form_ip.tpl", $ip);
 		} else {
 			$module['text'].= $templateHome->parse($modules_root."portfolio/tpl/table_ip.tpl", $ip);
